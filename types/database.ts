@@ -24,7 +24,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          name: string
+          name?: string
           invitation_token?: string | null
           invitation_used?: boolean
           created_at?: string
@@ -36,6 +36,7 @@ export interface Database {
           invitation_used?: boolean
           created_at?: string
         }
+        Relationships: []
       }
       users: {
         Row: {
@@ -59,17 +60,26 @@ export interface Database {
           email?: string
           created_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: 'users_household_id_fkey'
+            columns: ['household_id']
+            isOneToOne: false
+            referencedRelation: 'households'
+            referencedColumns: ['id']
+          }
+        ]
       }
       tasks: {
         Row: {
           id: string
           household_id: string
           title: string
-          priority: TaskPriority
+          priority: number
           manual_order: number
-          owner: TaskOwner
-          location: TaskLocation
-          status: TaskStatus
+          owner: string
+          location: string
+          status: string
           description: string | null
           notes: string | null
           is_pinned: boolean
@@ -83,11 +93,11 @@ export interface Database {
           id?: string
           household_id: string
           title: string
-          priority: TaskPriority
+          priority: number
           manual_order?: number
-          owner?: TaskOwner
-          location?: TaskLocation
-          status?: TaskStatus
+          owner?: string
+          location?: string
+          status?: string
           description?: string | null
           notes?: string | null
           is_pinned?: boolean
@@ -101,11 +111,11 @@ export interface Database {
           id?: string
           household_id?: string
           title?: string
-          priority?: TaskPriority
+          priority?: number
           manual_order?: number
-          owner?: TaskOwner
-          location?: TaskLocation
-          status?: TaskStatus
+          owner?: string
+          location?: string
+          status?: string
           description?: string | null
           notes?: string | null
           is_pinned?: boolean
@@ -115,6 +125,22 @@ export interface Database {
           completed_at?: string | null
           archived_at?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'tasks_household_id_fkey'
+            columns: ['household_id']
+            isOneToOne: false
+            referencedRelation: 'households'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'tasks_created_by_fkey'
+            columns: ['created_by']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
       }
       checklist_items: {
         Row: {
@@ -138,6 +164,15 @@ export interface Database {
           completed?: boolean
           manual_order?: number
         }
+        Relationships: [
+          {
+            foreignKeyName: 'checklist_items_task_id_fkey'
+            columns: ['task_id']
+            isOneToOne: false
+            referencedRelation: 'tasks'
+            referencedColumns: ['id']
+          }
+        ]
       }
       shopping_items: {
         Row: {
@@ -164,6 +199,15 @@ export interface Database {
           completed?: boolean
           manual_order?: number
         }
+        Relationships: [
+          {
+            foreignKeyName: 'shopping_items_task_id_fkey'
+            columns: ['task_id']
+            isOneToOne: false
+            referencedRelation: 'tasks'
+            referencedColumns: ['id']
+          }
+        ]
       }
       links: {
         Row: {
@@ -187,6 +231,15 @@ export interface Database {
           url?: string
           manual_order?: number
         }
+        Relationships: [
+          {
+            foreignKeyName: 'links_task_id_fkey'
+            columns: ['task_id']
+            isOneToOne: false
+            referencedRelation: 'tasks'
+            referencedColumns: ['id']
+          }
+        ]
       }
       task_history: {
         Row: {
@@ -210,7 +263,27 @@ export interface Database {
           changed_at?: string
           change_summary?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: 'task_history_task_id_fkey'
+            columns: ['task_id']
+            isOneToOne: false
+            referencedRelation: 'tasks'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'task_history_changed_by_fkey'
+            columns: ['changed_by']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
       }
     }
+    Views: Record<string, never>
+    Functions: Record<string, never>
+    Enums: Record<string, never>
+    CompositeTypes: Record<string, never>
   }
 }
