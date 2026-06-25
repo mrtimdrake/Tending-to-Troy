@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist, Inter, Source_Serif_4 } from 'next/font/google'
+import { ServiceWorkerRegistration } from '@/components/ServiceWorkerRegistration'
 import './globals.css'
 
 const geist = Geist({
@@ -32,6 +33,9 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'Tending to Troy',
   },
+  icons: {
+    apple: '/icons/apple-touch-icon.png',
+  },
 }
 
 export const viewport: Viewport = {
@@ -51,6 +55,7 @@ export default function RootLayout({
       className={`${geist.variable} ${sourceSerif4.variable} ${inter.variable}`}
     >
       <body className="min-h-screen bg-paper text-navy antialiased">
+        <ServiceWorkerRegistration />
         {children}
       </body>
     </html>

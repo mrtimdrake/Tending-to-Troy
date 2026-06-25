@@ -12,6 +12,28 @@ The build sequence is designed so that each phase produces something working and
 
 ---
 
+## Milestone Reviews
+
+Every milestone must conclude with a Milestone Review document before the branch is merged into `main`.
+
+**File naming:** `Milestone-{N}-Review.md` in the project root.
+
+**Required sections:**
+
+| Section | Content |
+|---|---|
+| **Objectives** | What this milestone was intended to achieve |
+| **Deliverables** | What was built — completed in full, partially, or not at all |
+| **Architectural decisions** | Non-obvious choices made and the rationale behind them |
+| **Deviations from the PRD** | Anything built differently from what the PRD specifies, and why |
+| **Known issues** | Bugs, gaps, or technical debt introduced during this milestone |
+| **Risks** | Anything that could cause problems in a subsequent phase or at launch |
+| **Recommendation** | Merge into `main`, merge with conditions, or continue on this branch |
+
+The Milestone Review is written by the engineer (or AI engineer) who built the milestone. It is not a sign-off document — it is a record. Future phases should reference the Known Issues and Risks sections of prior reviews before beginning work.
+
+---
+
 ## Phase 1 — Foundation
 *Estimated scope: medium. Must be complete and solid before anything else is built.*
 
