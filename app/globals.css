@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Colours */
+  --color-paper: #F5E8A8;
+  --color-ivory: #FFFDF6;
+  --color-navy: #102A43;
+  --color-slate: #5B6C80;
+  --color-brass: #B48A3D;
+  --color-moss: #7E9F79;
+  --color-terracotta: #C97A52;
+
+  /* Corner radius */
+  --radius-card: 20px;
+  --radius-button: 14px;
+  --radius-input: 14px;
+  --radius-image: 18px;
+
+  /* Shadows — opacity kept below 10% per design system */
+  --shadow-card: 0 2px 12px rgba(16, 42, 67, 0.07);
+  --shadow-lift: 0 6px 24px rgba(16, 42, 67, 0.10);
+
+  /* Motion */
+  --duration-card: 180ms;
+  --duration-button: 120ms;
+  --duration-page: 220ms;
+  --duration-pin: 250ms;
+  --easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@layer base {
+  html {
+    background-color: var(--color-paper);
+    color: var(--color-navy);
+    font-family: var(--font-source-serif), serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-geist), sans-serif;
+    font-weight: 600;
+  }
+
+  /* Ensure minimum touch target size */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@layer utilities {
+  .font-heading {
+    font-family: var(--font-geist), sans-serif;
+  }
+
+  .font-body {
+    font-family: var(--font-source-serif), serif;
+  }
+
+  .font-ui {
+    font-family: var(--font-inter), sans-serif;
+  }
+}
