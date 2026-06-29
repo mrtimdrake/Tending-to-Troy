@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
 import { regenerateInvitationToken } from '@/lib/auth/actions'
 import { useRouter } from 'next/navigation'
@@ -17,7 +17,13 @@ export function InvitationPanel({ token: initialToken, invitationUsed }: Props) 
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
-  const inviteUrl = `${window.location.origin}/auth/invite/${token}`
+  const [origin, setOrigin] = useState('')
+
+  useEffect(() => {
+    setOrigin(window.location.origin)
+  }, [])
+
+  const inviteUrl = `${origin}/auth/invite/${token}`
 
   function handleCopy() {
     navigator.clipboard.writeText(inviteUrl).then(() => {

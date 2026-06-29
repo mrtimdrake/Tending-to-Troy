@@ -53,10 +53,11 @@ export async function registerFirstUser(formData: FormData) {
     }
   }
 
-  // Create the Supabase Auth user
-  const { data: authData, error: authError } = await supabase.auth.signUp({
+  // Create the Supabase Auth user via admin client (auto-confirms — no email verification needed)
+  const { data: authData, error: authError } = await admin.auth.admin.createUser({
     email,
     password,
+    email_confirm: true,
   })
 
   if (authError || !authData.user) {
@@ -135,10 +136,11 @@ export async function registerWithInvitation(
     return { error: 'This household is already full.' }
   }
 
-  // Create the Supabase Auth user
-  const { data: authData, error: authError } = await supabase.auth.signUp({
+  // Create the Supabase Auth user via admin client (auto-confirms — no email verification needed)
+  const { data: authData, error: authError } = await admin.auth.admin.createUser({
     email,
     password,
+    email_confirm: true,
   })
 
   if (authError || !authData.user) {

@@ -1,0 +1,21 @@
+Tending to Troy
+
+Project Constitution
+
+This project exists to help us care for our home.
+
+Every new feature must make caring for our home simpler, calmer or more enjoyable.
+
+If a feature increases complexity without providing proportional value, it should not be built.
+
+The application should remain understandable after ten years.
+
+Beauty is a feature.
+
+Performance is a feature.
+
+Reliability is a feature.
+
+Calmness is a feature.
+
+The software should disappear into the background so that attention remains on the home itself.

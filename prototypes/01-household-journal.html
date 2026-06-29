@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Prototype 1 — The Household Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --paper: #F5E8A8;
+  --ivory: #FFFDF6;
+  --navy: #102A43;
+  --slate: #5B6C80;
+  --brass: #B48A3D;
+  --moss: #7E9F79;
+  --terra: #C97A52;
+  --sc: 0 2px 14px rgba(16,42,67,.07);
+  --sl: 0 6px 28px rgba(16,42,67,.12);
+  --sn: 0 1px 0 rgba(16,42,67,.07);
+}
+
+html,body{height:100%;overflow:hidden;background:var(--paper)}
+body{font-family:'Source Serif 4',Georgia,serif;color:var(--navy);-webkit-font-smoothing:antialiased}
+
+.screen{
+  position:fixed;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  opacity:0;pointer-events:none;
+  transition:opacity 240ms ease,transform 240ms ease;
+  transform:translateY(10px);
+}
+.screen.active{opacity:1;pointer-events:all;transform:translateY(0)}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:var(--ivory);box-shadow:var(--sn);
+  padding:env(safe-area-inset-top,0) 20px 0;
+  display:flex;align-items:center;justify-content:space-between;
+  min-height:64px;
+}
+.nav-pad{padding-top:14px;padding-bottom:12px;display:flex;align-items:center;justify-content:space-between;width:100%}
+.nav-name{font-family:'Inter',sans-serif;font-weight:600;font-size:17px;letter-spacing:-.015em;color:var(--navy);line-height:1}
+.nav-tag{font-family:'Source Serif 4',serif;font-style:italic;font-weight:300;font-size:12.5px;color:var(--slate);margin-top:3px}
+.nav-icons{display:flex;gap:2px}
+.icon-btn{
+  width:44px;height:44px;border:none;background:none;cursor:pointer;
+  color:var(--brass);border-radius:10px;display:flex;align-items:center;justify-content:center;
+  transition:background 120ms;-webkit-tap-highlight-color:transparent;
+}
+.icon-btn:hover{background:rgba(180,138,61,.09)}
+.icon-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* HOME */
+.home{max-width:680px;margin:0 auto;padding:20px 16px 120px}
+@media(min-width:720px){.home{padding:28px 24px 100px}}
+
+/* SECTIONS */
+.section{margin-bottom:22px}
+.sec-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 4px;min-height:44px;cursor:pointer;user-select:none;
+  -webkit-tap-highlight-color:transparent;border-radius:8px;
+  transition:background 120ms;
+}
+.sec-hdr:hover{background:rgba(16,42,67,.03)}
+.sec-label{font-family:'Inter',sans-serif;font-weight:500;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--slate)}
+.sec-right{display:flex;align-items:center;gap:5px}
+.sec-count{font-family:'Inter',sans-serif;font-size:10.5px;color:var(--slate);opacity:.65}
+.chevron{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:var(--slate);transition:transform 200ms cubic-bezier(.4,0,.2,1)}
+.chevron svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+[data-c="true"] .chevron{transform:rotate(-90deg)}
+.sec-body{overflow:hidden;transition:max-height 210ms cubic-bezier(.4,0,.2,1)}
+.cards{display:flex;flex-direction:column;gap:10px}
+
+/* CARD */
+.card{
+  background:var(--ivory);border-radius:20px;box-shadow:var(--sc);
+  padding:16px 18px 14px;cursor:pointer;
+  transition:box-shadow 180ms ease,transform 180ms ease;
+  -webkit-tap-highlight-color:transparent;position:relative;
+}
+.card:hover{box-shadow:var(--sl);transform:translateY(-1px)}
+.card:active{transform:scale(.985);transition-duration:80ms}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.card-title{font-family:'Source Serif 4',serif;font-size:15.5px;line-height:1.42;color:var(--navy);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pin{width:7px;height:7px;border-radius:50%;background:var(--brass);flex-shrink:0;margin-top:5px;box-shadow:0 1px 3px rgba(180,138,61,.45)}
+.card-btm{display:flex;align-items:center;justify-content:space-between}
+.badges{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.badge{font-family:'Inter',sans-serif;font-weight:500;font-size:10.5px;padding:3px 9px;border-radius:100px;white-space:nowrap}
+.b-out{background:rgba(126,159,121,.18);color:#336B2E}
+.b-in{background:rgba(91,108,128,.12);color:var(--slate)}
+.b-tim{background:rgba(201,122,82,.14);color:#8B3D18}
+.b-wife{background:rgba(180,138,61,.14);color:#6B4A0D}
+.b-any{background:rgba(16,42,67,.07);color:var(--slate)}
+.shop-icon{color:var(--brass);opacity:.75;display:flex;align-items:center}
+.shop-icon svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.empty{padding:14px 18px;font-family:'Source Serif 4',serif;font-style:italic;font-size:15px;color:var(--slate);opacity:.55}
+
+/* FAB */
+.fab{
+  position:fixed;bottom:calc(28px + env(safe-area-inset-bottom,0px));right:20px;
+  width:56px;height:56px;border-radius:28px;background:var(--navy);color:var(--ivory);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(16,42,67,.28);z-index:90;
+  transition:transform 120ms ease,box-shadow 120ms ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.fab:hover{transform:scale(1.06);box-shadow:0 6px 28px rgba(16,42,67,.35)}
+.fab:active{transform:scale(.96)}
+.fab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
+/* DETAIL NAV */
+.dnav{
+  position:sticky;top:0;z-index:100;
+  background:var(--ivory);box-shadow:var(--sn);
+  padding:env(safe-area-inset-top,0) 12px 0;
+  display:flex;align-items:center;gap:4px;min-height:60px;
+}
+.dnav-pad{display:flex;align-items:center;gap:4px;width:100%;padding:10px 0}
+.back{width:44px;height:44px;border:none;background:none;cursor:pointer;color:var(--brass);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 120ms;-webkit-tap-highlight-color:transparent}
+.back:hover{background:rgba(180,138,61,.09)}
+.back svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.dnav-title{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* DETAIL */
+.detail{max-width:680px;margin:0 auto;padding:24px 20px 80px}
+@media(min-width:720px){.detail{padding:32px 28px 80px}}
+.d-title{font-family:'Source Serif 4',serif;font-weight:600;font-size:26px;line-height:1.22;color:var(--navy);margin-bottom:16px}
+.d-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.chip{font-family:'Inter',sans-serif;font-weight:500;font-size:11.5px;padding:5px 13px;border-radius:100px}
+.ch-p{background:rgba(16,42,67,.08);color:var(--navy)}
+.ch-out{background:rgba(126,159,121,.18);color:#336B2E}
+.ch-any{background:rgba(16,42,67,.07);color:var(--slate)}
+.weather{display:flex;align-items:center;gap:8px;background:rgba(126,159,121,.11);border-radius:12px;padding:10px 14px;margin-bottom:26px}
+.weather svg{width:15px;height:15px;stroke:#2E6B2A;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.wtext{font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#2E6B2A}
+.ds{margin-bottom:28px}
+.ds-title{font-family:'Inter',sans-serif;font-weight:500;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--slate);padding-bottom:10px;border-bottom:1px solid rgba(16,42,67,.07);margin-bottom:12px}
+.body-text{font-family:'Source Serif 4',serif;font-size:15.5px;line-height:1.68;color:var(--navy)}
+.cl-item{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid rgba(16,42,67,.05)}
+.cl-item:last-child{border-bottom:none}
+.checkbox{width:20px;height:20px;border-radius:6px;border:1.5px solid rgba(16,42,67,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;cursor:pointer;transition:background 120ms,border-color 120ms}
+.checkbox.done{background:var(--moss);border-color:var(--moss)}
+.checkbox.done svg{display:block}
+.checkbox svg{display:none;width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.cl-text{font-family:'Source Serif 4',serif;font-size:15px;line-height:1.5;color:var(--navy)}
+.cl-text.done{color:var(--slate);text-decoration:line-through;opacity:.55}
+.sh-item{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid rgba(16,42,67,.05)}
+.sh-item:last-child{border-bottom:none}
+.stick{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(16,42,67,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;cursor:pointer;transition:background 120ms,border-color 120ms}
+.stick.got{background:var(--brass);border-color:var(--brass)}
+.stick.got svg{display:block}
+.stick svg{display:none;width:10px;height:10px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.sh-name{font-family:'Source Serif 4',serif;font-size:15px;color:var(--navy)}
+.sh-qty{font-family:'Inter',sans-serif;font-size:12px;color:var(--slate);margin-top:2px}
+.sh-name.got{color:var(--slate);text-decoration:line-through;opacity:.55}
+.hist-item{display:flex;gap:13px;padding:9px 0;border-bottom:1px solid rgba(16,42,67,.05)}
+.hist-item:last-child{border-bottom:none}
+.hdot{width:7px;height:7px;border-radius:50%;background:rgba(16,42,67,.18);flex-shrink:0;margin-top:7px}
+.htext{font-family:'Source Serif 4',serif;font-size:14px;color:var(--slate);line-height:1.5}
+.htime{font-family:'Inter',sans-serif;font-size:11.5px;color:var(--slate);opacity:.6;margin-top:2px}
+
+.proto-tag{position:fixed;bottom:12px;left:16px;font-family:'Inter',sans-serif;font-size:10px;font-weight:500;color:var(--slate);opacity:.5;letter-spacing:.04em;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="s-home">
+<nav class="nav"><div class="nav-pad">
+  <div>
+    <div class="nav-name">Tending to Troy</div>
+    <div class="nav-tag">Care for our home.</div>
+  </div>
+  <div class="nav-icons">
+    <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
+    <button class="icon-btn" aria-label="Profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></button>
+  </div>
+</div></nav>
+
+<div class="home">
+
+  <div class="section" data-c="false" id="sec-1">
+    <div class="sec-hdr" onclick="tog('sec-1','b1')">
+      <span class="sec-label">Priority 1</span>
+      <div class="sec-right"><span class="sec-count">(2)</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b1">
+      <div class="cards">
+        <div class="card" onclick="goDetail()">
+          <div class="card-top"><div class="card-title">Replace the kitchen tap washers</div><div class="pin"></div></div>
+          <div class="card-btm"><div class="badges"><span class="badge b-in">Indoor</span><span class="badge b-tim">Tim</span></div></div>
+        </div>
+        <div class="card" onclick="goDetail()">
+          <div class="card-top"><div class="card-title">Stain the back decking</div></div>
+          <div class="card-btm">
+            <div class="badges"><span class="badge b-out">Outdoor</span><span class="badge b-any">Anyone</span></div>
+            <div class="shop-icon"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-c="false" id="sec-2">
+    <div class="sec-hdr" onclick="tog('sec-2','b2')">
+      <span class="sec-label">Priority 2</span>
+      <div class="sec-right"><span class="sec-count">(2)</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b2">
+      <div class="cards">
+        <div class="card" onclick="goDetail()">
+          <div class="card-top"><div class="card-title">Order a replacement garden hose</div></div>
+          <div class="card-btm">
+            <div class="badges"><span class="badge b-out">Outdoor</span><span class="badge b-wife">Wife</span></div>
+            <div class="shop-icon"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+          </div>
+        </div>
+        <div class="card" onclick="goDetail()">
+          <div class="card-top"><div class="card-title">Sort the utility room shelving</div></div>
+          <div class="card-btm"><div class="badges"><span class="badge b-in">Indoor</span><span class="badge b-any">Anyone</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-c="true" id="sec-3">
+    <div class="sec-hdr" onclick="tog('sec-3','b3')">
+      <span class="sec-label">Priority 3</span>
+      <div class="sec-right"><span class="sec-count">(1)</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b3" style="max-height:0">
+      <div class="cards">
+        <div class="card" onclick="goDetail()">
+          <div class="card-top"><div class="card-title">Repot the bay trees</div></div>
+          <div class="card-btm"><div class="badges"><span class="badge b-out">Outdoor</span><span class="badge b-wife">Wife</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-c="true" id="sec-4">
+    <div class="sec-hdr" onclick="tog('sec-4','b4')">
+      <span class="sec-label">Priority 4</span>
+      <div class="sec-right"><span class="sec-count">(0)</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b4" style="max-height:0">
+      <div class="empty">Nothing here yet.</div>
+    </div>
+  </div>
+
+</div>
+<button class="fab" aria-label="Add task" onclick="void 0"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+</div>
+
+<!-- DETAIL -->
+<div class="screen" id="s-detail">
+<div class="dnav"><div class="dnav-pad">
+  <button class="back" onclick="goHome()" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+  <span class="dnav-title">Stain the back decking</span>
+</div></div>
+
+<div class="detail">
+  <h1 class="d-title">Stain the back decking</h1>
+  <div class="d-chips">
+    <span class="chip ch-p">Priority 1</span>
+    <span class="chip ch-out">Outdoor</span>
+    <span class="chip ch-any">Anyone</span>
+  </div>
+  <div class="weather">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <span class="wtext">Weather suitable.</span>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Description</div>
+    <p class="body-text">The back decking needs a full sand and stain before summer. Last treated three years ago — the wood is starting to look tired in places. Use the same oil as before but consider the darker shade this time.</p>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Checklist — 2 of 6 done</div>
+    <div class="cl-item"><div class="checkbox done"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="cl-text done">Clear furniture from the decking</span></div>
+    <div class="cl-item"><div class="checkbox done"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="cl-text done">Sand the surface lightly</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Clean with deck cleaner</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Allow to dry for 24 hours</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Apply first coat</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Apply second coat (after 4 hours)</span></div>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Shopping List</div>
+    <div class="sh-item"><div class="stick got"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><div><div class="sh-name got">Wide paint brush</div><div class="sh-qty">Already in the shed</div></div></div>
+    <div class="sh-item"><div class="stick"></div><div><div class="sh-name">Decking oil</div><div class="sh-qty">2 × 2.5L tins</div></div></div>
+    <div class="sh-item"><div class="stick"></div><div><div class="sh-name">Sanding sheets</div><div class="sh-qty">Coarse grade</div></div></div>
+    <div class="sh-item"><div class="stick"></div><div><div class="sh-name">Deck cleaner spray</div></div></div>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Notes</div>
+    <p class="body-text">Dry weather needed. Do not begin if rain is expected within 48 hours — the oil won't cure properly. Check the Met Office forecast the evening before.</p>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">History</div>
+    <div class="hist-item"><div class="hdot"></div><div><div class="htext">Edited by Tim</div><div class="htime">18 June 2026</div></div></div>
+    <div class="hist-item"><div class="hdot"></div><div><div class="htext">Created by Tim</div><div class="htime">12 June 2026</div></div></div>
+  </div>
+</div>
+</div>
+
+<div class="proto-tag">Prototype 1 · The Household Journal</div>
+
+<script>
+function goDetail(){
+  document.getElementById('s-home').classList.remove('active');
+  var d=document.getElementById('s-detail');
+  d.classList.add('active');
+  d.scrollTop=0;
+}
+function goHome(){
+  document.getElementById('s-detail').classList.remove('active');
+  document.getElementById('s-home').classList.add('active');
+}
+function tog(sid,bid){
+  var sec=document.getElementById(sid);
+  var body=document.getElementById(bid);
+  var col=sec.dataset.c==='true';
+  if(col){
+    sec.dataset.c='false';
+    body.style.maxHeight=body.scrollHeight+'px';
+    body.addEventListener('transitionend',function h(){body.style.maxHeight='none';body.removeEventListener('transitionend',h)});
+  } else {
+    body.style.maxHeight=body.scrollHeight+'px';
+    sec.dataset.c='true';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){body.style.maxHeight='0'})});
+  }
+}
+document.querySelectorAll('.sec-body').forEach(function(b){
+  if(b.closest('.section').dataset.c!=='true')b.style.maxHeight='none';
+});
+</script>
+</body>
+</html>
