@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Prototype 2 — Scandinavian Modern</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg: #F5F4F0;
+  --card: #FFFFFF;
+  --text: #1C1B18;
+  --sub: #87857F;
+  --sage: #4A6E55;
+  --sage-bg: rgba(74,110,85,.08);
+  --border: rgba(28,27,24,.09);
+  --border-m: rgba(28,27,24,.14);
+}
+
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'DM Sans',system-ui,sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+
+.screen{
+  position:fixed;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  opacity:0;pointer-events:none;
+  transition:opacity 200ms ease,transform 200ms ease;
+  transform:translateY(6px);
+}
+.screen.active{opacity:1;pointer-events:all;transform:translateY(0)}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  padding:env(safe-area-inset-top,0) 24px 0;
+  display:flex;align-items:center;justify-content:space-between;
+  min-height:56px;
+}
+.nav-pad{padding:14px 0;display:flex;align-items:center;justify-content:space-between;width:100%}
+.nav-name{font-size:14px;font-weight:500;color:var(--text);letter-spacing:-.02em}
+.nav-icons{display:flex;gap:0}
+.icon-btn{
+  width:44px;height:44px;border:none;background:none;cursor:pointer;
+  color:var(--sub);border-radius:8px;display:flex;align-items:center;justify-content:center;
+  transition:color 120ms,background 120ms;-webkit-tap-highlight-color:transparent;
+}
+.icon-btn:hover{color:var(--text);background:rgba(28,27,24,.05)}
+.icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* HOME */
+.home{max-width:640px;margin:0 auto;padding:32px 24px 120px}
+@media(min-width:720px){.home{padding:40px 32px 100px}}
+
+/* SECTIONS */
+.section{margin-bottom:36px}
+.sec-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 0 12px;cursor:pointer;user-select:none;
+  -webkit-tap-highlight-color:transparent;min-height:44px;
+  border-bottom:1px solid var(--border);
+}
+.sec-label{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--sub)}
+.sec-right{display:flex;align-items:center;gap:8px}
+.sec-count{font-size:10px;color:var(--sub);opacity:.7;letter-spacing:.04em}
+.chevron{width:16px;height:16px;display:flex;align-items:center;justify-content:center;color:var(--sub);transition:transform 180ms cubic-bezier(.4,0,.2,1)}
+.chevron svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+[data-c="true"] .chevron{transform:rotate(-90deg)}
+.sec-body{overflow:hidden;transition:max-height 200ms cubic-bezier(.4,0,.2,1)}
+.cards{display:flex;flex-direction:column}
+
+/* CARD */
+.card{
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  padding:16px 0;cursor:pointer;
+  transition:background 120ms;
+  -webkit-tap-highlight-color:transparent;
+  display:flex;align-items:flex-start;gap:16px;
+}
+.card:first-child{border-top:1px solid var(--border)}
+.card:hover{background:rgba(28,27,24,.015)}
+.card:active{background:rgba(28,27,24,.03)}
+.card-main{flex:1;min-width:0}
+.card-title{font-size:14px;font-weight:400;line-height:1.45;color:var(--text);margin-bottom:8px}
+.card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.dot-out{background:var(--sage)}
+.dot-in{background:var(--sub);opacity:.5}
+.meta-text{font-size:11px;font-weight:400;color:var(--sub)}
+.pin-mark{width:4px;height:4px;border-radius:50%;background:var(--text);flex-shrink:0;margin-top:6px;opacity:.35}
+.shop-mark{color:var(--sub);opacity:.5;display:flex;align-items:center;margin-top:1px;flex-shrink:0}
+.shop-mark svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.empty{padding:20px 0;font-size:13px;font-weight:300;font-style:italic;color:var(--sub)}
+
+/* FAB */
+.fab{
+  position:fixed;bottom:calc(32px + env(safe-area-inset-bottom,0px));right:24px;
+  width:48px;height:48px;border-radius:24px;background:var(--text);color:#fff;
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  z-index:90;transition:transform 120ms ease,opacity 120ms ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.fab:hover{transform:scale(1.05);opacity:.9}
+.fab:active{transform:scale(.96)}
+.fab svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round}
+
+/* DETAIL NAV */
+.dnav{
+  position:sticky;top:0;z-index:100;
+  background:var(--bg);border-bottom:1px solid var(--border);
+  padding:env(safe-area-inset-top,0) 24px 0;
+  display:flex;align-items:center;gap:0;min-height:52px;
+}
+.dnav-pad{display:flex;align-items:center;gap:8px;width:100%;padding:10px 0}
+.back{width:44px;height:44px;border:none;background:none;cursor:pointer;color:var(--sub);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:color 120ms,background 120ms;-webkit-tap-highlight-color:transparent;margin-left:-10px}
+.back:hover{color:var(--text);background:rgba(28,27,24,.05)}
+.back svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* DETAIL */
+.detail{max-width:640px;margin:0 auto;padding:36px 24px 80px}
+@media(min-width:720px){.detail{padding:44px 32px 80px}}
+.d-label{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);margin-bottom:12px}
+.d-title{font-size:22px;font-weight:400;line-height:1.28;color:var(--text);margin-bottom:20px;letter-spacing:-.02em}
+.d-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.tag{font-size:11px;font-weight:400;padding:4px 10px;border-radius:4px;background:var(--sage-bg);color:var(--sage)}
+.tag-n{background:rgba(28,27,24,.06);color:var(--sub)}
+.weather{display:flex;align-items:center;gap:8px;margin-bottom:28px}
+.weather svg{width:13px;height:13px;stroke:var(--sage);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.wtext{font-size:12px;font-weight:400;color:var(--sage);letter-spacing:.01em}
+.ds{margin-bottom:32px}
+.ds-title{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);margin-bottom:16px}
+.body-text{font-size:14px;font-weight:300;line-height:1.72;color:var(--text)}
+.cl-item{display:flex;align-items:flex-start;gap:14px;padding:10px 0;border-bottom:1px solid var(--border)}
+.cl-item:last-child{border-bottom:none}
+.checkbox{width:16px;height:16px;border-radius:3px;border:1px solid var(--border-m);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;cursor:pointer;transition:background 120ms,border-color 120ms}
+.checkbox.done{background:var(--sage);border-color:var(--sage)}
+.checkbox.done svg{display:block}
+.checkbox svg{display:none;width:9px;height:9px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.cl-text{font-size:14px;font-weight:300;line-height:1.5;color:var(--text)}
+.cl-text.done{color:var(--sub);text-decoration:line-through;opacity:.5}
+.sh-item{display:flex;align-items:flex-start;gap:14px;padding:10px 0;border-bottom:1px solid var(--border)}
+.sh-item:last-child{border-bottom:none}
+.tick{width:16px;height:16px;border-radius:50%;border:1px solid var(--border-m);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;cursor:pointer;transition:background 120ms,border-color 120ms}
+.tick.got{background:var(--sage);border-color:var(--sage)}
+.tick.got svg{display:block}
+.tick svg{display:none;width:8px;height:8px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.sh-name{font-size:14px;font-weight:300;color:var(--text)}
+.sh-qty{font-size:12px;font-weight:300;color:var(--sub);margin-top:2px}
+.sh-name.got{color:var(--sub);text-decoration:line-through;opacity:.5}
+.hist-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.hist-item:last-child{border-bottom:none}
+.hline{width:1px;background:var(--border);flex-shrink:0;margin:4px 0 0;height:16px}
+.htext{font-size:13px;font-weight:300;color:var(--sub)}
+.htime{font-size:11px;font-weight:300;color:var(--sub);opacity:.55;margin-top:2px}
+
+.proto-tag{position:fixed;bottom:12px;left:24px;font-size:10px;font-weight:400;color:var(--sub);opacity:.45;letter-spacing:.04em;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="s-home">
+<nav class="nav"><div class="nav-pad">
+  <span class="nav-name">Tending to Troy</span>
+  <div class="nav-icons">
+    <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
+    <button class="icon-btn" aria-label="Profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></button>
+  </div>
+</div></nav>
+
+<div class="home">
+
+  <div class="section" data-c="false" id="sec-1">
+    <div class="sec-hdr" onclick="tog('sec-1','b1')">
+      <span class="sec-label">Priority 1</span>
+      <div class="sec-right"><span class="sec-count">2</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b1">
+      <div class="cards">
+        <div class="card" onclick="goDetail()">
+          <div class="pin-mark"></div>
+          <div class="card-main">
+            <div class="card-title">Replace the kitchen tap washers</div>
+            <div class="card-meta"><div class="dot dot-in"></div><span class="meta-text">Indoor · Tim</span></div>
+          </div>
+        </div>
+        <div class="card" onclick="goDetail()">
+          <div class="card-main">
+            <div class="card-title">Stain the back decking</div>
+            <div class="card-meta"><div class="dot dot-out"></div><span class="meta-text">Outdoor · Anyone</span></div>
+          </div>
+          <div class="shop-mark"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-c="false" id="sec-2">
+    <div class="sec-hdr" onclick="tog('sec-2','b2')">
+      <span class="sec-label">Priority 2</span>
+      <div class="sec-right"><span class="sec-count">2</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b2">
+      <div class="cards">
+        <div class="card" onclick="goDetail()">
+          <div class="card-main">
+            <div class="card-title">Order a replacement garden hose</div>
+            <div class="card-meta"><div class="dot dot-out"></div><span class="meta-text">Outdoor · Wife</span></div>
+          </div>
+          <div class="shop-mark"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+        </div>
+        <div class="card" onclick="goDetail()">
+          <div class="card-main">
+            <div class="card-title">Sort the utility room shelving</div>
+            <div class="card-meta"><div class="dot dot-in"></div><span class="meta-text">Indoor · Anyone</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-c="true" id="sec-3">
+    <div class="sec-hdr" onclick="tog('sec-3','b3')">
+      <span class="sec-label">Priority 3</span>
+      <div class="sec-right"><span class="sec-count">1</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b3" style="max-height:0">
+      <div class="cards">
+        <div class="card" onclick="goDetail()">
+          <div class="card-main">
+            <div class="card-title">Repot the bay trees</div>
+            <div class="card-meta"><div class="dot dot-out"></div><span class="meta-text">Outdoor · Wife</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-c="true" id="sec-4">
+    <div class="sec-hdr" onclick="tog('sec-4','b4')">
+      <span class="sec-label">Priority 4</span>
+      <div class="sec-right"><span class="sec-count">0</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b4" style="max-height:0">
+      <div class="empty">Nothing here yet.</div>
+    </div>
+  </div>
+
+</div>
+<button class="fab" aria-label="Add task"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+</div>
+
+<!-- DETAIL -->
+<div class="screen" id="s-detail">
+<div class="dnav"><div class="dnav-pad">
+  <button class="back" onclick="goHome()" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+</div></div>
+
+<div class="detail">
+  <div class="d-label">Priority 1</div>
+  <h1 class="d-title">Stain the back decking</h1>
+  <div class="d-tags">
+    <span class="tag">Outdoor</span>
+    <span class="tag-n tag">Anyone</span>
+  </div>
+  <div class="weather">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <span class="wtext">Weather suitable.</span>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Description</div>
+    <p class="body-text">The back decking needs a full sand and stain before summer. Last treated three years ago — the wood is starting to look tired in places. Use the same oil as before but consider the darker shade this time.</p>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Checklist — 2 of 6 done</div>
+    <div class="cl-item"><div class="checkbox done"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="cl-text done">Clear furniture from the decking</span></div>
+    <div class="cl-item"><div class="checkbox done"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="cl-text done">Sand the surface lightly</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Clean with deck cleaner</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Allow to dry for 24 hours</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Apply first coat</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Apply second coat (after 4 hours)</span></div>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Shopping List</div>
+    <div class="sh-item"><div class="tick got"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><div><div class="sh-name got">Wide paint brush</div><div class="sh-qty">Already in the shed</div></div></div>
+    <div class="sh-item"><div class="tick"></div><div><div class="sh-name">Decking oil</div><div class="sh-qty">2 × 2.5L tins</div></div></div>
+    <div class="sh-item"><div class="tick"></div><div><div class="sh-name">Sanding sheets (coarse)</div></div></div>
+    <div class="sh-item"><div class="tick"></div><div><div class="sh-name">Deck cleaner spray</div></div></div>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Notes</div>
+    <p class="body-text">Dry weather needed. Do not begin if rain is expected within 48 hours — the oil won't cure properly.</p>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">History</div>
+    <div class="hist-item"><div class="hline"></div><div><div class="htext">Edited by Tim</div><div class="htime">18 June 2026</div></div></div>
+    <div class="hist-item"><div class="hline"></div><div><div class="htext">Created by Tim</div><div class="htime">12 June 2026</div></div></div>
+  </div>
+</div>
+</div>
+
+<div class="proto-tag">Prototype 2 · Scandinavian Modern</div>
+
+<script>
+function goDetail(){document.getElementById('s-home').classList.remove('active');var d=document.getElementById('s-detail');d.classList.add('active');d.scrollTop=0}
+function goHome(){document.getElementById('s-detail').classList.remove('active');document.getElementById('s-home').classList.add('active')}
+function tog(sid,bid){var sec=document.getElementById(sid),body=document.getElementById(bid),col=sec.dataset.c==='true';if(col){sec.dataset.c='false';body.style.maxHeight=body.scrollHeight+'px';body.addEventListener('transitionend',function h(){body.style.maxHeight='none';body.removeEventListener('transitionend',h)})}else{body.style.maxHeight=body.scrollHeight+'px';sec.dataset.c='true';requestAnimationFrame(function(){requestAnimationFrame(function(){body.style.maxHeight='0'})})}}
+document.querySelectorAll('.sec-body').forEach(function(b){if(b.closest('.section').dataset.c!=='true')b.style.maxHeight='none'});
+</script>
+</body>
+</html>

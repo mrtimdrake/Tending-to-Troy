@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Prototype 3 — The Gardener's Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --linen: #EDE8DF;
+  --cream: #FAF8F3;
+  --bark: #2A1F14;
+  --stone: #978B80;
+  --clay: #C07050;
+  --sage: #7A8F6E;
+  --sage-l: rgba(122,143,110,.13);
+  --clay-l: rgba(192,112,80,.11);
+  --shadow: 0 2px 18px rgba(42,31,20,.065);
+  --shadow-l: 0 6px 32px rgba(42,31,20,.11);
+  --border: rgba(42,31,20,.08);
+}
+
+html,body{height:100%;overflow:hidden;background:var(--linen)}
+body{font-family:'Nunito Sans',system-ui,sans-serif;color:var(--bark);-webkit-font-smoothing:antialiased}
+
+.screen{
+  position:fixed;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  opacity:0;pointer-events:none;
+  transition:opacity 260ms ease,transform 260ms ease;
+  transform:translateY(12px);
+}
+.screen.active{opacity:1;pointer-events:all;transform:translateY(0)}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:var(--cream);
+  border-bottom:1px solid var(--border);
+  padding:env(safe-area-inset-top,0) 20px 0;
+  display:flex;align-items:center;justify-content:space-between;
+  min-height:68px;
+}
+.nav-pad{padding:14px 0;display:flex;align-items:center;justify-content:space-between;width:100%}
+.nav-name{font-family:'Lora',Georgia,serif;font-weight:500;font-size:18px;letter-spacing:-.01em;color:var(--bark);line-height:1}
+.nav-tag{font-family:'Lora',Georgia,serif;font-style:italic;font-weight:400;font-size:12px;color:var(--stone);margin-top:4px}
+.nav-icons{display:flex;gap:2px}
+.icon-btn{
+  width:44px;height:44px;border:none;background:none;cursor:pointer;
+  color:var(--stone);border-radius:12px;display:flex;align-items:center;justify-content:center;
+  transition:background 140ms,color 140ms;-webkit-tap-highlight-color:transparent;
+}
+.icon-btn:hover{background:rgba(42,31,20,.06);color:var(--bark)}
+.icon-btn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* HOME */
+.home{max-width:700px;margin:0 auto;padding:22px 16px 120px}
+@media(min-width:740px){.home{padding:30px 24px 100px}}
+
+/* SECTIONS */
+.section{margin-bottom:20px}
+.sec-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 6px;min-height:48px;cursor:pointer;user-select:none;
+  -webkit-tap-highlight-color:transparent;border-radius:12px;
+  transition:background 140ms;
+}
+.sec-hdr:hover{background:rgba(42,31,20,.04)}
+.sec-label{font-family:'Lora',serif;font-style:italic;font-weight:400;font-size:13px;color:var(--stone)}
+.sec-right{display:flex;align-items:center;gap:6px}
+.sec-count{font-family:'Nunito Sans',sans-serif;font-size:11px;font-weight:400;color:var(--stone);opacity:.7}
+.chevron{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--stone);transition:transform 220ms cubic-bezier(.4,0,.2,1)}
+.chevron svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+[data-c="true"] .chevron{transform:rotate(-90deg)}
+.sec-body{overflow:hidden;transition:max-height 220ms cubic-bezier(.4,0,.2,1)}
+.cards{display:flex;flex-direction:column;gap:10px;padding-top:4px}
+
+/* CARD */
+.card{
+  background:var(--cream);border-radius:18px;box-shadow:var(--shadow);
+  padding:18px 20px 15px;cursor:pointer;
+  transition:box-shadow 200ms ease,transform 200ms ease;
+  -webkit-tap-highlight-color:transparent;position:relative;
+}
+.card:hover{box-shadow:var(--shadow-l);transform:translateY(-1px)}
+.card:active{transform:scale(.987);transition-duration:80ms}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:11px}
+.card-title{font-family:'Lora',Georgia,serif;font-weight:400;font-size:16px;line-height:1.42;color:var(--bark);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pin{width:7px;height:7px;border-radius:50%;background:var(--clay);flex-shrink:0;margin-top:5px;opacity:.75}
+.card-btm{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.badges{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.badge{font-family:'Nunito Sans',sans-serif;font-weight:600;font-size:10.5px;padding:3.5px 10px;border-radius:100px;letter-spacing:.01em;white-space:nowrap}
+.b-out{background:var(--sage-l);color:#466039}
+.b-in{background:rgba(42,31,20,.07);color:var(--stone)}
+.b-tim{background:var(--clay-l);color:#8A3D1F}
+.b-wife{background:rgba(122,143,110,.12);color:#466039}
+.b-any{background:rgba(42,31,20,.06);color:var(--stone)}
+.shop-icon{color:var(--clay);opacity:.65;display:flex;align-items:center}
+.shop-icon svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.empty{padding:14px 6px;font-family:'Lora',serif;font-style:italic;font-size:15px;color:var(--stone);opacity:.55}
+
+/* FAB */
+.fab{
+  position:fixed;bottom:calc(28px + env(safe-area-inset-bottom,0px));right:18px;
+  width:58px;height:58px;border-radius:29px;background:var(--clay);color:#fff;
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 22px rgba(192,112,80,.38);z-index:90;
+  transition:transform 140ms ease,box-shadow 140ms ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.fab:hover{transform:scale(1.06);box-shadow:0 6px 28px rgba(192,112,80,.46)}
+.fab:active{transform:scale(.96)}
+.fab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
+/* DETAIL NAV */
+.dnav{
+  position:sticky;top:0;z-index:100;
+  background:var(--cream);border-bottom:1px solid var(--border);
+  padding:env(safe-area-inset-top,0) 14px 0;
+  display:flex;align-items:center;min-height:64px;
+}
+.dnav-pad{display:flex;align-items:center;gap:6px;width:100%;padding:10px 0}
+.back{width:44px;height:44px;border:none;background:none;cursor:pointer;color:var(--stone);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 140ms,color 140ms;-webkit-tap-highlight-color:transparent}
+.back:hover{background:rgba(42,31,20,.06);color:var(--bark)}
+.back svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dnav-title{font-family:'Lora',serif;font-size:15px;font-weight:400;color:var(--bark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* DETAIL */
+.detail{max-width:700px;margin:0 auto;padding:26px 20px 80px}
+@media(min-width:740px){.detail{padding:34px 28px 80px}}
+.d-title{font-family:'Lora',Georgia,serif;font-weight:600;font-size:26px;line-height:1.22;color:var(--bark);margin-bottom:16px}
+.d-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px}
+.chip{font-family:'Nunito Sans',sans-serif;font-weight:600;font-size:11.5px;padding:5px 13px;border-radius:100px}
+.ch-p{background:rgba(42,31,20,.07);color:var(--bark)}
+.ch-out{background:var(--sage-l);color:#466039}
+.ch-any{background:rgba(42,31,20,.06);color:var(--stone)}
+.weather{display:flex;align-items:center;gap:9px;background:var(--sage-l);border-radius:14px;padding:11px 16px;margin-bottom:26px}
+.weather svg{width:14px;height:14px;stroke:var(--sage);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.wtext{font-family:'Nunito Sans',sans-serif;font-size:13px;font-weight:600;color:var(--sage)}
+.ds{margin-bottom:28px}
+.ds-title{font-family:'Nunito Sans',sans-serif;font-weight:600;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--stone);padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.body-text{font-family:'Lora',Georgia,serif;font-size:15.5px;line-height:1.7;color:var(--bark)}
+.cl-item{display:flex;align-items:flex-start;gap:13px;padding:10px 0;border-bottom:1px solid var(--border)}
+.cl-item:last-child{border-bottom:none}
+.checkbox{width:20px;height:20px;border-radius:8px;border:1.5px solid rgba(42,31,20,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;cursor:pointer;transition:background 140ms,border-color 140ms}
+.checkbox.done{background:var(--sage);border-color:var(--sage)}
+.checkbox.done svg{display:block}
+.checkbox svg{display:none;width:10px;height:10px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.cl-text{font-family:'Lora',serif;font-size:15px;line-height:1.5;color:var(--bark)}
+.cl-text.done{color:var(--stone);text-decoration:line-through;opacity:.5}
+.sh-item{display:flex;align-items:flex-start;gap:13px;padding:10px 0;border-bottom:1px solid var(--border)}
+.sh-item:last-child{border-bottom:none}
+.stick{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(42,31,20,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;cursor:pointer;transition:background 140ms,border-color 140ms}
+.stick.got{background:var(--clay);border-color:var(--clay)}
+.stick.got svg{display:block}
+.stick svg{display:none;width:10px;height:10px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.sh-name{font-family:'Lora',serif;font-size:15px;color:var(--bark)}
+.sh-qty{font-family:'Nunito Sans',sans-serif;font-size:12px;font-weight:400;color:var(--stone);margin-top:3px}
+.sh-name.got{color:var(--stone);text-decoration:line-through;opacity:.5}
+.hist-item{display:flex;gap:13px;padding:10px 0;border-bottom:1px solid var(--border)}
+.hist-item:last-child{border-bottom:none}
+.hdot{width:8px;height:8px;border-radius:50%;background:rgba(42,31,20,.14);flex-shrink:0;margin-top:6px}
+.htext{font-family:'Lora',serif;font-size:14px;color:var(--stone)}
+.htime{font-family:'Nunito Sans',sans-serif;font-size:11.5px;font-weight:400;color:var(--stone);opacity:.6;margin-top:3px}
+
+.proto-tag{position:fixed;bottom:12px;left:16px;font-family:'Nunito Sans',sans-serif;font-size:10px;font-weight:400;color:var(--stone);opacity:.4;letter-spacing:.04em;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="s-home">
+<nav class="nav"><div class="nav-pad">
+  <div>
+    <div class="nav-name">Tending to Troy</div>
+    <div class="nav-tag">Care for our home.</div>
+  </div>
+  <div class="nav-icons">
+    <button class="icon-btn" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
+    <button class="icon-btn" aria-label="Profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></button>
+  </div>
+</div></nav>
+
+<div class="home">
+
+  <div class="section" data-c="false" id="sec-1">
+    <div class="sec-hdr" onclick="tog('sec-1','b1')">
+      <span class="sec-label">Priority 1</span>
+      <div class="sec-right"><span class="sec-count">(2)</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b1">
+      <div class="cards">
+        <div class="card" onclick="goDetail()">
+          <div class="card-top"><div class="card-title">Replace the kitchen tap washers</div><div class="pin"></div></div>
+          <div class="card-btm"><div class="badges"><span class="badge b-in">Indoor</span><span class="badge b-tim">Tim</span></div></div>
+        </div>
+        <div class="card" onclick="goDetail()">
+          <div class="card-top"><div class="card-title">Stain the back decking</div></div>
+          <div class="card-btm">
+            <div class="badges"><span class="badge b-out">Outdoor</span><span class="badge b-any">Anyone</span></div>
+            <div class="shop-icon"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-c="false" id="sec-2">
+    <div class="sec-hdr" onclick="tog('sec-2','b2')">
+      <span class="sec-label">Priority 2</span>
+      <div class="sec-right"><span class="sec-count">(2)</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b2">
+      <div class="cards">
+        <div class="card" onclick="goDetail()">
+          <div class="card-top"><div class="card-title">Order a replacement garden hose</div></div>
+          <div class="card-btm">
+            <div class="badges"><span class="badge b-out">Outdoor</span><span class="badge b-wife">Wife</span></div>
+            <div class="shop-icon"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+          </div>
+        </div>
+        <div class="card" onclick="goDetail()">
+          <div class="card-top"><div class="card-title">Sort the utility room shelving</div></div>
+          <div class="card-btm"><div class="badges"><span class="badge b-in">Indoor</span><span class="badge b-any">Anyone</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-c="true" id="sec-3">
+    <div class="sec-hdr" onclick="tog('sec-3','b3')">
+      <span class="sec-label">Priority 3</span>
+      <div class="sec-right"><span class="sec-count">(1)</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b3" style="max-height:0">
+      <div class="cards">
+        <div class="card" onclick="goDetail()">
+          <div class="card-top"><div class="card-title">Repot the bay trees</div></div>
+          <div class="card-btm"><div class="badges"><span class="badge b-out">Outdoor</span><span class="badge b-wife">Wife</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-c="true" id="sec-4">
+    <div class="sec-hdr" onclick="tog('sec-4','b4')">
+      <span class="sec-label">Priority 4</span>
+      <div class="sec-right"><span class="sec-count">(0)</span><span class="chevron"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+    <div class="sec-body" id="b4" style="max-height:0">
+      <div class="empty">Nothing here yet.</div>
+    </div>
+  </div>
+
+</div>
+<button class="fab" aria-label="Add task"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+</div>
+
+<!-- DETAIL -->
+<div class="screen" id="s-detail">
+<div class="dnav"><div class="dnav-pad">
+  <button class="back" onclick="goHome()" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+  <span class="dnav-title">Stain the back decking</span>
+</div></div>
+
+<div class="detail">
+  <h1 class="d-title">Stain the back decking</h1>
+  <div class="d-chips">
+    <span class="chip ch-p">Priority 1</span>
+    <span class="chip ch-out">Outdoor</span>
+    <span class="chip ch-any">Anyone</span>
+  </div>
+  <div class="weather">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <span class="wtext">Weather suitable.</span>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Description</div>
+    <p class="body-text">The back decking needs a full sand and stain before summer. Last treated three years ago — the wood is starting to look tired in places. Use the same oil as before but consider the darker shade this time.</p>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Checklist — 2 of 6 done</div>
+    <div class="cl-item"><div class="checkbox done"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="cl-text done">Clear furniture from the decking</span></div>
+    <div class="cl-item"><div class="checkbox done"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><span class="cl-text done">Sand the surface lightly</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Clean with deck cleaner</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Allow to dry for 24 hours</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Apply first coat</span></div>
+    <div class="cl-item"><div class="checkbox"></div><span class="cl-text">Apply second coat (after 4 hours)</span></div>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Shopping List</div>
+    <div class="sh-item"><div class="stick got"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div><div><div class="sh-name got">Wide paint brush</div><div class="sh-qty">Already in the shed</div></div></div>
+    <div class="sh-item"><div class="stick"></div><div><div class="sh-name">Decking oil</div><div class="sh-qty">2 × 2.5L tins</div></div></div>
+    <div class="sh-item"><div class="stick"></div><div><div class="sh-name">Sanding sheets (coarse)</div></div></div>
+    <div class="sh-item"><div class="stick"></div><div><div class="sh-name">Deck cleaner spray</div></div></div>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">Notes</div>
+    <p class="body-text">Dry weather needed. Do not begin if rain is expected within 48 hours — the oil won't cure properly. Check the forecast the evening before.</p>
+  </div>
+
+  <div class="ds">
+    <div class="ds-title">History</div>
+    <div class="hist-item"><div class="hdot"></div><div><div class="htext">Edited by Tim</div><div class="htime">18 June 2026</div></div></div>
+    <div class="hist-item"><div class="hdot"></div><div><div class="htext">Created by Tim</div><div class="htime">12 June 2026</div></div></div>
+  </div>
+</div>
+</div>
+
+<div class="proto-tag">Prototype 3 · The Gardener's Companion</div>
+
+<script>
+function goDetail(){document.getElementById('s-home').classList.remove('active');var d=document.getElementById('s-detail');d.classList.add('active');d.scrollTop=0}
+function goHome(){document.getElementById('s-detail').classList.remove('active');document.getElementById('s-home').classList.add('active')}
+function tog(sid,bid){var sec=document.getElementById(sid),body=document.getElementById(bid),col=sec.dataset.c==='true';if(col){sec.dataset.c='false';body.style.maxHeight=body.scrollHeight+'px';body.addEventListener('transitionend',function h(){body.style.maxHeight='none';body.removeEventListener('transitionend',h)})}else{body.style.maxHeight=body.scrollHeight+'px';sec.dataset.c='true';requestAnimationFrame(function(){requestAnimationFrame(function(){body.style.maxHeight='0'})})}}
+document.querySelectorAll('.sec-body').forEach(function(b){if(b.closest('.section').dataset.c!=='true')b.style.maxHeight='none'});
+</script>
+</body>
+</html>

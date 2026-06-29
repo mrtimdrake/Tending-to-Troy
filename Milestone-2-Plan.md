@@ -7,17 +7,26 @@
 
 ## Guiding Philosophy
 
-The objective of Milestone 2 is not to build infrastructure. It is to make Tending to Troy *feel like itself* for the first time.
+The objective of Milestone 2 is to establish the design foundation — not to deliver the finished product.
+
+The chosen direction is **The Household Journal** (Direction 1), but this should be treated as Version 1 of the design language rather than its final form. Typography, spacing, hierarchy, animation, and interaction details are expected to evolve as the application is used in real life. The design will be refined through use, not anticipated in advance.
 
 When this milestone is complete, a user who opens the app on their phone should immediately feel:
 
 > This is not another app. This is something someone made for their home.
 
-Every decision in this milestone — every spacing value, every typeface choice, every animation — should be measured against that feeling. If a component feels corporate, generic, or cold, it is wrong regardless of whether it is technically correct.
+That feeling should be present in the foundation. It does not need to be perfected.
 
-The home screen is the emotional heart of the application. It should feel like opening a well-kept household journal: warm, unhurried, and completely clear.
+**Optimise for a clean, extensible, beautifully structured foundation** that can be refined over time without requiring architectural changes. This means:
 
-No feature data is connected in this milestone. Everything uses realistic placeholder content. The interface must be perfected before the data layer is wired.
+- Design tokens centralised in CSS variables — spacing, colour, radius, shadow, and motion can be updated in one place
+- Components that accept their content as props with no hard-coded copy
+- No layout assumptions baked into components that would resist future refinement
+- Animations implemented correctly but kept simple — smoothness matters more than elaborateness at this stage
+
+**When uncertain between polishing visuals further or moving the product forward:** choose the path that preserves design quality while allowing progress. A component that is 90% right and ships is more valuable than one that is 95% right and delays Milestone 3.
+
+No feature data is connected in this milestone. Everything uses realistic placeholder content.
 
 ---
 
@@ -325,17 +334,18 @@ app/home/page.tsx (server component — auth check, passes placeholder data)
 
 ## What Good Looks Like
 
-When Milestone 2 is complete, you should be able to take a screenshot of the home screen and feel no instinct to apologise for it. It should look finished — like a real application, not a work in progress.
+When Milestone 2 is complete, the home screen should feel like a considered starting point — warm, clear, and structurally sound. It will not be finished. That is intentional.
 
 Specific checks:
-- The paper yellow background and ivory cards create immediate warmth
-- Source Serif 4 on the task titles gives the cards a handwritten quality
-- The priority section labels are quiet enough to not compete with the cards
-- The badge colours (moss, brass, terracotta) are present but not loud
-- The collapsed sections feel intentional, not broken
-- Opening and closing a section feels smooth and natural
+- The background and card surface create immediate warmth and distinguish this from a generic productivity tool
+- Task titles are set in a serif face that gives each card an intentional, recorded quality
+- Priority section labels are quiet — they organise without competing
+- Collapsed sections feel deliberate, not broken
+- Section expand/collapse is smooth and physically credible
+- The design system tokens (colour, spacing, radius, shadow, motion) are all in CSS variables and working correctly
+- The components accept props cleanly — nothing is hard-coded that should be dynamic
 
-If any of these checks feel wrong, the milestone is not complete.
+The question is not "does this look perfect?" The question is "is this a foundation we would be proud to build on?"
 
 ---
 
