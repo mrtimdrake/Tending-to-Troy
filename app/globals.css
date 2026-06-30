@@ -64,3 +64,12 @@
     font-family: var(--font-inter), sans-serif;
   }
 }
+
+/* Brass pin settle — like pressing a tack into paper. No bounce. */
+@keyframes pin-drop {
+  0%   { transform: rotate(-14deg) translateY(-3px) scale(0.9); }
+  100% { transform: rotate(0deg) translateY(0) scale(1); }
+}
+.animate-pin-drop {
+  animation: pin-drop var(--duration-pin) var(--easing-default);
+}

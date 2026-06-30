@@ -162,3 +162,58 @@ async function setStatus(
   await recordHistory(data.id, ctx.userId, summary)
   return { task: mapTaskRow(data) }
 }
+
+// ============================================================
+// Pin / Unpin
+// ============================================================
+export async function setPinned(
+  id: string,
+  pinned: boolean
+): Promise<ActionResult> {
+  const ctx = await getContext()
+  if (!ctx) return { error: 'Not signed in.' }
+
+  const { data, error } = await ctx.supabase
+    .from('tasks')
+    .update({ is_pinned: pinned, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select('*')
+    .single()
+
+  if (error || !data) return { error: 'Could not update the task.' }
+
+  await recordHistory(data.id, ctx.userId, pinned ? 'Pinned' : 'Unpinned')
+  return { task: mapTaskRow(data) }
+}
+
+// ============================================================
+// Reorder (manual drag order within a priority group)
+// Persists explicit spaced manual_order values for the supplied ids,
+// in the given order: 10, 20, 30, … RLS scopes writes to the household.
+// ============================================================
+export async function reorderTasks(
+  orderedIds: string[]
+): Promise<{ ok: true } | { error: string }> {
+  const ctx = await getContext()
+  if (!ctx) return { error: 'Not signed in.' }
+  if (orderedIds.length === 0) return { ok: true }
+
+  const now = new Date().toISOString()
+  const results = await Promise.all(
+    orderedIds.map((id, index) =>
+      ctx.supabase
+        .from('tasks')
+        .update({ manual_order: (index + 1) * 10, updated_at: now })
+        .eq('id', id)
+    )
+  )
+
+  if (results.some((r) => r.error)) {
+    console.error('reorderTasks: one or more updates failed')
+    return { error: 'Could not save the new order.' }
+  }
+
+  // One history entry on the first task is enough to record the reorder.
+  await recordHistory(orderedIds[0], ctx.userId, 'Reordered')
+  return { ok: true }
+}

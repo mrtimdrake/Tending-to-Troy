@@ -2,14 +2,15 @@
 import Link from 'next/link'
 import type { Task } from '@/features/tasks/types'
 import { LocationBadge, OwnerBadge } from './TaskCardBadge'
-import { PinIndicator } from './PinIndicator'
+import { BrassPin } from './BrassPin'
 import { ShoppingIndicator } from './ShoppingIndicator'
 
 type Props = {
   task: Task
+  onTogglePin?: (task: Task) => void
 }
 
-export function TaskCard({ task }: Props) {
+export function TaskCard({ task, onTogglePin }: Props) {
   return (
     <Link
       href={`/task/${task.id}`}
@@ -26,12 +27,23 @@ export function TaskCard({ task }: Props) {
         e.currentTarget.style.boxShadow = 'var(--shadow-card)'
       }}
     >
-      {task.isPinned && <PinIndicator />}
+      {onTogglePin && (
+        <button
+          aria-label={task.isPinned ? 'Unpin task' : 'Pin task'}
+          aria-pressed={task.isPinned}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            onTogglePin(task)
+          }}
+          className="absolute top-1 right-1 flex items-center justify-center w-11 h-11 rounded-lg"
+          style={{ WebkitTapHighlightColor: 'transparent' }}
+        >
+          <BrassPin pinned={task.isPinned} />
+        </button>
+      )}
 
-      <p
-        className="font-body text-body text-navy leading-snug mb-2.5"
-        style={{ paddingRight: task.isPinned ? '1.25rem' : undefined }}
-      >
+      <p className="font-body text-body text-navy leading-snug mb-2.5 pr-9">
         {task.title}
       </p>
 
