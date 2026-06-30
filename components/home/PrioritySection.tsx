@@ -16,6 +16,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import type { Task } from '@/features/tasks/types'
+import { TaskCard } from './TaskCard'
 import { SortableTaskCard } from './SortableTaskCard'
 import { useSectionState } from '@/hooks/useSectionState'
 
@@ -30,6 +31,11 @@ export function PrioritySection({ priority, tasks, onTogglePin, onReorder }: Pro
   const [isOpen, toggle] = useSectionState(priority)
   const contentRef = useRef<HTMLDivElement>(null)
   const [contentHeight, setContentHeight] = useState(0)
+  // Drag is a client-only enhancement. Render plain cards during SSR and
+  // the first client render (matching the server) to avoid a hydration
+  // mismatch from dnd-kit's accessibility nodes, then enable drag.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   useEffect(() => {
     if (contentRef.current) {
@@ -94,6 +100,10 @@ export function PrioritySection({ priority, tasks, onTogglePin, onReorder }: Pro
             <p className="font-body italic text-sm text-slate/70 px-1 py-2">
               Nothing here yet.
             </p>
+          ) : !mounted ? (
+            tasks.map((task) => (
+              <TaskCard key={task.id} task={task} onTogglePin={onTogglePin} />
+            ))
           ) : (
             <DndContext
               sensors={sensors}
