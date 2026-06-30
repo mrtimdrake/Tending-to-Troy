@@ -160,11 +160,14 @@ The app is **Internal Alpha Ready** only when every box is checked.
 - [x] Read failures are distinguishable from empty and are logged
 
 ### Deployment
-- [ ] Deployed to Vercel on a stable URL over HTTPS
-- [ ] All three env vars set in Vercel (service-role server-only)
-- [ ] Supabase keys rotated post-share
-- [ ] Migrations 001–003 applied to production
-- [ ] `sw.js` excluded from middleware; SW registers in production
+- [x] Deployed to Vercel on a stable URL over HTTPS (live 30 Jun; sign-in + home verified)
+- [x] All three env vars set in Vercel (service-role server-only)
+- [x] Next.js upgraded to 15.3.9 (CVE-2025-66478 — Vercel deploy blocker)
+- [x] Migrations 001–003 applied to production
+- [x] `sw.js` excluded from middleware
+- [ ] Supabase **Auth → Site URL + Redirect URLs** set to the Vercel domain
+- [ ] **Rotate the `sb_secret_…` key** (shown in screenshots) and update Vercel
+- [ ] SW registers in production (verify DevTools → Application)
 - [ ] PWA installs on iPhone Safari and Android Chrome
 
 ### Usability

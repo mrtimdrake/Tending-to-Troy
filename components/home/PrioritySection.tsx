@@ -1,16 +1,32 @@
 'use client'
 import { useRef, useEffect, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
+import {
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
 import type { Task } from '@/features/tasks/types'
-import { TaskCard } from './TaskCard'
+import { SortableTaskCard } from './SortableTaskCard'
 import { useSectionState } from '@/hooks/useSectionState'
 
 type Props = {
   priority: 1 | 2 | 3 | 4
   tasks: Task[]
+  onTogglePin?: (task: Task) => void
+  onReorder?: (orderedIds: string[], prevOrderedIds: string[]) => void
 }
 
-export function PrioritySection({ priority, tasks }: Props) {
+export function PrioritySection({ priority, tasks, onTogglePin, onReorder }: Props) {
   const [isOpen, toggle] = useSectionState(priority)
   const contentRef = useRef<HTMLDivElement>(null)
   const [contentHeight, setContentHeight] = useState(0)
@@ -21,11 +37,28 @@ export function PrioritySection({ priority, tasks }: Props) {
     }
   }, [tasks])
 
+  // Distance (desktop) / long-press (mobile) activation so a tap still
+  // navigates and the list still scrolls.
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 6 } })
+  )
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const ids = tasks.map((t) => t.id)
+    const from = ids.indexOf(active.id as string)
+    const to = ids.indexOf(over.id as string)
+    if (from === -1 || to === -1) return
+    onReorder?.(arrayMove(ids, from, to), ids)
+  }
+
   return (
     <section>
       <button
         onClick={toggle}
-        className="w-full flex items-center justify-between py-2 min-h-[44px] -webkit-tap-highlight-transparent select-none"
+        className="w-full flex items-center justify-between py-2 min-h-[44px] select-none"
         aria-expanded={isOpen}
         style={{ WebkitTapHighlightColor: 'transparent' }}
       >
@@ -62,7 +95,24 @@ export function PrioritySection({ priority, tasks }: Props) {
               Nothing here yet.
             </p>
           ) : (
-            tasks.map((task) => <TaskCard key={task.id} task={task} />)
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={tasks.map((t) => t.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {tasks.map((task) => (
+                  <SortableTaskCard
+                    key={task.id}
+                    task={task}
+                    onTogglePin={onTogglePin}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           )}
         </div>
       </div>

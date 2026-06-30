@@ -29,6 +29,18 @@ export function useTasks(initial: Task[]) {
     setTasks((prev) => prev.filter((t) => t.id !== id))
   }, [])
 
+  // Apply a manual order to the given ids (spaced 10s), then re-sort.
+  // Used for optimistic drag-to-reorder.
+  const applyOrder = useCallback((orderedIds: string[]) => {
+    setTasks((prev) => {
+      const rank = new Map(orderedIds.map((id, i) => [id, (i + 1) * 10]))
+      const next = prev.map((t) =>
+        rank.has(t.id) ? { ...t, manualOrder: rank.get(t.id)! } : t
+      )
+      return sortTasks(next)
+    })
+  }, [])
+
   // Replace a temporary optimistic id with the confirmed row.
   const replaceTask = useCallback((tempId: string, task: Task) => {
     setTasks((prev) => {
@@ -84,5 +96,5 @@ export function useTasks(initial: Task[]) {
     }
   }, [upsertTask, removeTask])
 
-  return { tasks, upsertTask, removeTask, replaceTask }
+  return { tasks, upsertTask, removeTask, replaceTask, applyOrder }
 }

@@ -15,8 +15,8 @@ type Props = {
 const PRIORITIES: TaskPriority[] = [1, 2, 3, 4]
 
 export function HomeView({ initialTasks }: Props) {
-  const { tasks, upsertTask, removeTask, replaceTask } = useTasks(initialTasks)
-  const { create, error } = useTaskMutations({ upsertTask, removeTask, replaceTask })
+  const { tasks, upsertTask, removeTask, replaceTask, applyOrder } = useTasks(initialTasks)
+  const { create, togglePin, reorder, error } = useTaskMutations({ upsertTask, removeTask, replaceTask, applyOrder })
   const [formOpen, setFormOpen] = useState(false)
 
   return (
@@ -40,6 +40,8 @@ export function HomeView({ initialTasks }: Props) {
                 key={priority}
                 priority={priority}
                 tasks={tasks.filter((t) => t.priority === priority)}
+                onTogglePin={togglePin}
+                onReorder={reorder}
               />
             ))}
           </div>
