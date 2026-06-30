@@ -39,7 +39,6 @@ export async function registerFirstUser(formData: FormData) {
   const email = (formData.get('email') as string).trim()
   const password = formData.get('password') as string
 
-  const supabase = await createServerClient()
   const admin = createAdminClient()
 
   // Fail fast if any household already exists (prevents duplicate households)
@@ -109,7 +108,6 @@ export async function registerWithInvitation(
   const password = formData.get('password') as string
 
   const admin = createAdminClient()
-  const supabase = await createServerClient()
 
   // Validate the token
   const { data: household, error: tokenError } = await admin

@@ -1,12 +1,12 @@
 /**
  * Tending to Troy — Service Worker
  *
- * Phase 1: minimal stub that satisfies PWA installability requirements.
+ * Minimal stub that satisfies PWA installability (so the app can be
+ * installed to the home screen and launch standalone).
  *
- * Phase 3a will replace this with a full offline-queue implementation:
- *   - Cache-first strategy for static assets
- *   - Network-first strategy for API routes
- *   - Background sync for queued offline edits
+ * The app is online-only by product decision; there is no offline cache
+ * or background sync. If offline support is ever revived (end of roadmap,
+ * subject to go/no-go), the caching strategy would be added here.
  */
 
 const CACHE_NAME = 'tending-to-troy-v1'
