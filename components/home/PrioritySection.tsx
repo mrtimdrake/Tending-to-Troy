@@ -1,13 +1,13 @@
 'use client'
 import { useRef, useEffect, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
-import { PlaceholderTask } from '@/lib/placeholder/tasks'
+import type { Task } from '@/features/tasks/types'
 import { TaskCard } from './TaskCard'
 import { useSectionState } from '@/hooks/useSectionState'
 
 type Props = {
   priority: 1 | 2 | 3 | 4
-  tasks: PlaceholderTask[]
+  tasks: Task[]
 }
 
 export function PrioritySection({ priority, tasks }: Props) {

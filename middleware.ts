@@ -53,6 +53,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|manifest.json|icons).*)',
+    // Exclude static/PWA assets. sw.js must be excluded or the auth
+    // redirect serves HTML in its place and the service worker fails to
+    // register (wrong MIME type) when signed out.
+    '/((?!_next/static|_next/image|favicon.ico|manifest.json|icons|sw.js).*)',
   ],
 }

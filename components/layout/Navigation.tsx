@@ -1,4 +1,5 @@
-import { Search, User } from 'lucide-react'
+import Link from 'next/link'
+import { Settings } from 'lucide-react'
 
 export function Navigation() {
   return (
@@ -16,18 +17,13 @@ export function Navigation() {
           </p>
         </div>
         <div className="flex items-center -mr-1">
-          <button
-            aria-label="Search"
-            className="flex items-center justify-center w-11 h-11 rounded-lg text-brass hover:bg-navy/5 transition-colors duration-[120ms]"
-          >
-            <Search size={18} strokeWidth={1.75} />
-          </button>
-          <button
-            aria-label="Profile"
+          <Link
+            href="/settings"
+            aria-label="Settings"
             className="flex items-center justify-center w-11 h-11 rounded-lg text-navy hover:bg-navy/5 transition-colors duration-[120ms]"
           >
-            <User size={18} strokeWidth={1.75} />
-          </button>
+            <Settings size={18} strokeWidth={1.75} />
+          </Link>
         </div>
       </div>
     </header>

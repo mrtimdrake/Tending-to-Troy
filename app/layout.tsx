@@ -51,7 +51,7 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
+      lang="en-GB"
       className={`${geist.variable} ${sourceSerif4.variable} ${inter.variable}`}
     >
       <body className="min-h-screen bg-paper text-navy antialiased">

@@ -46,14 +46,8 @@ export function InvitationPanel({ token: initialToken, invitationUsed }: Props) 
   }
 
   return (
-    <div
-      className="rounded-card bg-ivory p-6"
-      style={{ boxShadow: 'var(--shadow-card)' }}
-    >
-      <h2 className="mb-1 font-heading text-title text-navy">
-        Invite your partner
-      </h2>
-      <p className="mb-5 font-ui text-small text-slate">
+    <div>
+      <p className="mb-4 font-ui text-small text-slate">
         Share this link with the other person in your household. It can only be used once.
       </p>
 
